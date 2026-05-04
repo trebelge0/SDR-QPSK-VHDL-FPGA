@@ -1,0 +1,40 @@
+# do /home/trebelge/venv/lib/python3.12/site-packages/vunit/sim_if/tcl_read_eval_loop.tcl
+# vsim -modelsimini /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/vunit_out/modelsim/modelsim.ini -wlf /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/vunit_out/test_output/lib.tb_duc.all_a6fcae7e67b270833e47a500818a54c742813d56/modelsim/vsim.wlf -quiet -t ps -onfinish stop lib.tb_duc(behavioral) -L vunit_lib -L lib -g/tb_duc/runner_cfg="active python runner : true,enabled_test_cases : ,output path : /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/vunit_out/test_output/lib.tb_duc.all_a6fcae7e67b270833e47a500818a54c742813d56/,tb path : /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/rtl/tb/,use_color : true" 
+# Start time: 00:01:58 on May 05,2026
+# ** Warning: Design size of 26305 statements exceeds ModelSim-Intel FPGA Starter Edition recommended capacity.
+# Expect performance to be adversely affected.
+#       [22;96;49m2170000 ps[0m - [1;37;49mdefault[0m              -    [1;37;49mINFO[0m - DUC : Modulation détectée et validée.
+#       [22;96;49m2330000 ps[0m - [1;37;49mcheck[0m                -   [1;31;49mERROR[0m - La fréquence n'est pas de 6.25 MHz
+# ** Failure: Stop simulation on log level error
+#    Time: 2330 ns  Iteration: 0  Process: /tb_duc/main File: /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd
+# Break in Subprogram core_failure at /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd line 84
+# Stopped at /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd line 84
+# 
+# Test Run Failed!
+# 
+# Stack trace result from 'tb' command
+#  /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd 84 return [address 0xf6df002a] Subprogram core_failure
+# called from  /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/logger_pkg-body.vhd 736 return [address 0xf6e03b9e] Subprogram decrease_stop_count
+# called from  /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/logger_pkg-body.vhd 731 return [address 0xf6e03c86] Subprogram decrease_stop_count
+# called from  /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/logger_pkg-body.vhd 910 return [address 0xf6dfebf1] Subprogram log
+# called from  /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/check/src/checker_pkg-body.vhd 258 return [address 0xf6e115ac] Subprogram log_failing_check
+# called from  /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/check/src/checker_pkg-body.vhd 275 return [address 0xf6e1104b] Subprogram failing_check
+# called from  /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check.vhd 184 return [address 0xf6e15a23] Subprogram check
+# called from  /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check.vhd 214 return [address 0xf6e15c33] Subprogram check
+# called from  /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/rtl/tb/tb_duc.vhd 106 return [address 0xf7285ab0] Process main
+# 
+# 
+# Surrounding code from 'see' command
+#   79 :   begin
+#   80 :     if core_failure_is_mocked then
+#   81 :       set(core_failure_mock_state, core_failure_called_idx, 1);
+#   82 :       reallocate(to_string_ptr(get(core_failure_mock_state, core_failure_message_idx)), msg);
+#   83 :     else
+# ->84 :       report msg severity failure;
+#   85 :     end if;
+#   86 :   end;
+#   87 : 
+#   88 :   procedure check_core_failure(msg : string := "") is
+# 
+# End time: 00:01:58 on May 05,2026, Elapsed time: 0:00:00
+# Errors: 1, Warnings: 1

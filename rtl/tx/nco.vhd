@@ -1,3 +1,6 @@
+
+-- Romain Englebert May 2026
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -5,20 +8,21 @@ use ieee.numeric_std.all;
 use work.sine_pkg.all;
 
 entity nco is
+    -- Generate a sine of resolution DATA_WIDTH based on a LUT with sine/cosine reconstruction through symmetry.
     generic (
-        PHASE_WIDTH : integer := 24; -- Précision de la frequence
-        LUT_WIDTH : integer := 10;
-        DATA_WIDTH  : integer := 12  -- Précision de l'amplitude
+        PHASE_WIDTH : integer := 24;  -- NCO Phase resolution (bits)
+        LUT_WIDTH : integer := 10;  -- NCO sine LUT size (bits)
+        DATA_WIDTH  : integer := 12  -- DAC resolution (bits)
     );
     port (
         clk   : in std_logic;
         rst   : in std_logic;
 
-        -- Contrôle (Entrée)
-        freq_word : in unsigned(PHASE_WIDTH - 1 downto 0); -- Fréquence de sortie
+        -- FCW = \frac{f_c 2^PHASE_WIDTH}{f_s} to set frequency (increment) : x100000 is for f_s = 100MHz and f_c = 100/16 = 6.25 MHz.
+        freq_word : in unsigned(PHASE_WIDTH - 1 downto 0);
 
-        -- Interface Master (vers le Mixeur)
-        m_axis_sin_tdata  : out signed(DATA_WIDTH - 1 downto 0);
+        -- Master (to mixer)
+        m_axis_sin_tdata  : out signed(DATA_WIDTH - 1 downto 0);  -- To mixer
         m_axis_cos_tdata  : out signed(DATA_WIDTH - 1 downto 0);
         m_axis_tvalid     : out std_logic;
         m_axis_tready     : in  std_logic
@@ -33,7 +37,7 @@ architecture Behavioral of nco is
 
 begin
 
-    -- 1. Phase accumulator (L'accumulateur tourne toujours, peu importe tready)
+    -- 1. Phase accumulator
     process(clk)
     begin
         if rising_edge(clk) then
@@ -45,16 +49,18 @@ begin
         end if;
     end process;
     
-    -- Valid est toujours à '1' car le NCO ne s'arrête jamais
+    -- Valid is always  '1' because NCO does'nt stop
     m_axis_tvalid <= '1'; 
 
-    -- 2. La LUT (Combinatoire)
+    -- 2. LUT (Combinational)
     process(phase_acc)
         variable p : integer;
     begin
-        -- On extrait l'adresse locale (0 à 1023)
+
         p := to_integer(phase_acc(PHASE_WIDTH-3 downto PHASE_WIDTH - LUT_WIDTH - 2));
 
+        -- Sine/Cosine reconstruction from a quarter of sine
+        -- The 2 first bits indicates the quarter
         case phase_acc(PHASE_WIDTH-1 downto PHASE_WIDTH-2) is
             when "00" => -- 0 à 90°
                 m_axis_sin_tdata <=  SINE_LUT(p);

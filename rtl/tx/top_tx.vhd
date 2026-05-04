@@ -1,25 +1,29 @@
+
+-- Romain Englebert May 2026
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 
 entity top_tx is
+    -- Transmitter (tx) top module
     generic (
-        L : integer := 4;
-        DATA_WIDTH : integer := 12;
-        PHASE_WIDTH : integer := 24;
-        LUT_WIDTH : integer := 10
+        L : integer := 4;  -- Upsampler zero-padding length
+        DATA_WIDTH : integer := 12;  -- DAC resolution (bits)
+        PHASE_WIDTH : integer := 24;  -- NCO Phase resolution (bits)
+        LUT_WIDTH : integer := 10  -- NCO sine LUT size (bits)
     );
     port (
         clk : in std_logic;
         rst : in std_logic;
 
-        in_data : in std_logic;
+        in_data : in std_logic; -- Serial input
         in_valid : in std_logic;
         in_ready : out std_logic;
         in_tlast : in std_logic;
 
-        out_data : out signed(DATA_WIDTH - 1 downto 0);
+        out_data : out signed(DATA_WIDTH - 1 downto 0); -- Parrallel modulated signal (for DAC)
         out_valid : out std_logic;
         out_ready : in std_logic
 
@@ -28,25 +32,25 @@ end entity;
 
 architecture Behavioral of top_tx is 
 
-    -- buffer
-    signal data_ab : std_logic_vector(1 downto 0);
+    -- Buffer to encoder
+    signal data_ab : std_logic_vector(1 downto 0);  -- From input
     signal valid_ab : std_logic;
     signal ready_ab : std_logic;
     signal tlast_ab : std_logic;
 
-    -- iq
+    -- Encoder to upsampler (iq)
     signal data_bc : std_logic_vector(3 downto 0);
     signal valid_bc : std_logic;
     signal ready_bc : std_logic;
     signal tlast_bc : std_logic;
 
-    -- iq_up
+    -- Upsampler to FIR filter (iq_up)
     signal data_cd : std_logic_vector(3 downto 0);
     signal valid_cd : std_logic;
     signal ready_cd : std_logic;
     signal tlast_cd : std_logic;
 
-    -- g_iq_up
+    -- FIR filter to DUC (g_iq_up)
     signal data_dqe : signed(DATA_WIDTH-1 downto 0);
     signal data_die : signed(DATA_WIDTH-1 downto 0);
     signal valid_die : std_logic;
@@ -55,15 +59,15 @@ architecture Behavioral of top_tx is
     signal tlast_die : std_logic;
     signal tlast_dqe : std_logic;
 
-    -- tx
-    signal data_ef : signed(DATA_WIDTH - 1 downto 0);
+    -- DUC to output (tx)
+    signal data_ef : signed(DATA_WIDTH - 1 downto 0);  -- To DAC
     signal valid_ef : std_logic;
     signal ready_ef : std_logic;
     signal tlast_ef : std_logic;
 
 begin
 
-    -- Block A (Le Bufferizer)
+    -- Block A (Buffer)
     block_a: entity work.buf
     port map (
         clk      => clk, rst => rst,
@@ -71,7 +75,7 @@ begin
         m_axis_tdata   => data_ab, m_axis_tvalid => valid_ab, m_axis_tready => ready_ab, m_axis_tlast => tlast_ab   -- Sortie vers B
     );
 
-    -- Block B (L'Encoder)
+    -- Block B (Encoder)
     block_b: entity work.encoder
     port map (
         clk      => clk, rst => rst,
@@ -79,7 +83,7 @@ begin
         m_axis_tdata   => data_bc, m_axis_tvalid => valid_bc, m_axis_tready => ready_bc, m_axis_tlast => tlast_bc   -- Sortie vers C
     );
 
-    -- Block C (L'Upsampler)
+    -- Block C (Upsampler)
     block_c: entity work.upsample
         generic map (
             L => L
@@ -90,7 +94,7 @@ begin
             m_axis_tdata   => data_cd, m_axis_tvalid => valid_cd, m_axis_tready => ready_cd, m_axis_tlast => tlast_cd   -- Sortie vers D
         );
 
-    -- Block Di (Le Filtre i)
+    -- Block Di (Filtre i)
     block_di: entity work.fir
         generic map(
             DATA_WIDTH => DATA_WIDTH,
@@ -102,7 +106,7 @@ begin
             m_axis_tdata   => data_die, m_axis_tvalid => valid_die, m_axis_tready => ready_de, m_axis_tlast => tlast_die   -- Sortie vers E
         );
 
-    -- Block Dq (Le Filtre q)
+    -- Block Dq (Filtre q)
     block_dq: entity work.fir
         generic map(
             DATA_WIDTH => DATA_WIDTH,
@@ -115,7 +119,7 @@ begin
         );
 
 
-    -- Block E (L'Upconverter)
+    -- Block E (Digital upconverter)
     block_e: entity work.duc
         generic map (
             DATA_WIDTH => DATA_WIDTH,
@@ -129,6 +133,7 @@ begin
             m_axis_tdata => data_ef, m_axis_tvalid => valid_ef, m_axis_tready => ready_ef, m_axis_tlast => tlast_ef -- Sortie vers F
         );
 
+    -- DUC to/from output
     out_data <= data_ef;
     out_valid <= valid_ef;
     ready_ef <= out_ready;

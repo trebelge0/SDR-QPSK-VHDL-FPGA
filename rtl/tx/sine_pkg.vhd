@@ -1,9 +1,16 @@
+
+-- Romain Englebert May 2026
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 
 package sine_pkg is
+    -- Contains sine values for NCO.
+    -- Data are obtained from the script sine_lut_generator.py
+    -- Only one quarter of a sine : Full period and cosine are obtained by symetry
+
     type rom_type is array (0 to 1023) of signed(11 downto 0);
 
     constant SINE_LUT : rom_type := (

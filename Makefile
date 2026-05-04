@@ -1,4 +1,7 @@
-all: compile sim
+
+# Romain Englebert May 2026
+
+all: compile test sim
 
 compile:
 	vcom -2008 rtl/tx/buffer.vhd
@@ -15,3 +18,6 @@ compile:
 
 sim:
 	vsim -do run.do
+
+test:
+	python3 run_vunit.py

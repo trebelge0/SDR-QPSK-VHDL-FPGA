@@ -1,4 +1,8 @@
+
+# Romain Englebert May 2026
+
 import math
+
 
 DATA_WIDTH = 12
 TABLE_SIZE = 1024 

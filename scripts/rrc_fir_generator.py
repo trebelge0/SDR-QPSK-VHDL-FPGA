@@ -1,3 +1,6 @@
+
+# Romain Englebert May 2026
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -18,7 +21,7 @@ def design_rrc(num_taps, osr, alpha):
 
 # Paramètres
 NUM_TAPS = 33
-OSR = 4
+OSR = 8
 ALPHA = 0.5
 BIT_WIDTH = 16
 
@@ -47,7 +50,7 @@ for i, val in enumerate(coeffs_int):
 print("\n")
 
 # 3. Calcul FFT (Réponse fréquentielle)
-# On ajoute des zéros (padding) pour une meilleure résolution spectrale
+# On ajoute des zéros pour une meilleure résolution
 N_FFT = 1024
 H_freq = np.fft.fftshift(np.fft.fft(h, N_FFT))
 freq = np.linspace(-0.5, 0.5, N_FFT)
@@ -55,13 +58,13 @@ freq = np.linspace(-0.5, 0.5, N_FFT)
 # 4. Affichage
 plt.figure(figsize=(12, 6))
 
-# Graphique Temps
+# Temps
 plt.subplot(2, 1, 1)
 plt.stem(h, basefmt=" ")
 plt.title(f"Réponse Impulsionnelle (Impulse Response) - {NUM_TAPS} Taps")
 plt.grid(True)
 
-# Graphique Fréquence (FFT)
+# Fréquence (FFT)
 plt.subplot(2, 1, 2)
 # Conversion en dB pour mieux voir l'atténuation
 H_db = 20 * np.log10(np.abs(H_freq) / np.max(np.abs(H_freq)))
@@ -70,7 +73,7 @@ plt.title("Réponse en Fréquence (FFT) - Magnitude en dB")
 plt.xlabel("Fréquence normalisée (fs)")
 plt.ylabel("Magnitude (dB)")
 plt.grid(True)
-plt.ylim([-60, 5]) # Zoom sur la zone utile
+plt.ylim([-60, 5])
 
 plt.tight_layout()
 plt.show()

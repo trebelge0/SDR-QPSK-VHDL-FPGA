@@ -1,0 +1,8 @@
+# End time: 00:03:12 on May 05,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 1
+# vsim -modelsimini /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/vunit_out/modelsim/modelsim.ini -wlf /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/vunit_out/test_output/lib.tb_tx.all_de55b5529bb67cc86988c3e4218c738df2fc4e68/modelsim/vsim.wlf -quiet -t ps -onfinish stop lib.tb_tx(behavioral) -L vunit_lib -L lib -g/tb_tx/runner_cfg="active python runner : true,enabled_test_cases : ,output path : /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/vunit_out/test_output/lib.tb_tx.all_de55b5529bb67cc86988c3e4218c738df2fc4e68/,tb path : /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/rtl/tb/,use_color : true" 
+# Start time: 00:03:12 on May 05,2026
+# ** Warning: Design size of 27024 statements exceeds ModelSim-Intel FPGA Starter Edition recommended capacity.
+# Expect performance to be adversely affected.
+# Break in Subprogram stop at /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd line 13
+# Stopped at /home/trebelge/venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd line 13
