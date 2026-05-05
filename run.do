@@ -1,3 +1,8 @@
+#############################
+# Romain Englebert May 2026 #
+#############################
+
+
 vsim work.tb_tx
 
 add wave tb_tx/uut/clk
@@ -40,10 +45,17 @@ add wave tb_tx/uut/block_e/m_axis_tvalid
 add wave tb_tx/uut/block_e/m_axis_tlast
 add wave -format analog-step -radix signed -height 100 -min -2048 -max 2047 tb_tx/uut/block_e/m_axis_tdata
 
+view list
+
+puts "DEBUG: log_filename = '$log_filename'"
+
+if {[string equal $log_filename "out_data"]} {
+    add list /tb_tx/uut/block_e/m_axis_tdata
+} elseif {[string equal $log_filename "iqfir_data"]} {
+    add list /tb_tx/uut/block_di/m_axis_tdata
+    add list /tb_tx/uut/block_dq/m_axis_tdata
+}
+
 run 3000 ns
 
-#view list
-#add list /tb_tx/uut/block_di/m_axis_tdata
-#add list /tb_tx/uut/block_dq/m_axis_tdata
-#add list /tb_tx/uut/block_e/m_axis_tdata
-#write list validation/data.txt
+write list scripts/$log_filename.txt

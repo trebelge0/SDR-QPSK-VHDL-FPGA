@@ -3,21 +3,16 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;   
-library vunit_lib;
-context vunit_lib.vunit_context;
-
+use ieee.numeric_std.all;
 
 entity tb_tx is 
-    -- Global test
     generic (
         DATA_WIDTH : integer := 12;
         LUT_WIDTH : integer := 10;
         PHASE_WIDTH : integer := 24;
-        L : integer := 8;
+        L : integer := 16;
         INPUT_WIDTH : integer := 32;
-        INPUT_DATA : std_logic_vector(INPUT_WIDTH-1 downto 0) := "11000110011101011000011110111011";
-        runner_cfg : string
+        INPUT_DATA : std_logic_vector(INPUT_WIDTH-1 downto 0) := "11000110011101011000011110111011"
     );
 end entity;
 
@@ -59,7 +54,6 @@ begin
     -- Processus de test
     main : process
     begin
-    test_runner_setup(runner, runner_cfg);
 
         -- 1. Reset
         rst <= '1';
@@ -90,6 +84,5 @@ begin
         in_data  <= '0';
         
         wait for 2000 ns;
-    test_runner_cleanup(runner);
     end process;
 end Behavioral;

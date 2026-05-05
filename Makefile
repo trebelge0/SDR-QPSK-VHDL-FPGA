@@ -1,23 +1,35 @@
 
 # Romain Englebert May 2026
 
-all: compile test sim
+# --- Configuration ---
+# iqfir or out
+RUN_NAME ?= out
 
-compile:
-	vcom -2008 rtl/tx/buffer.vhd
-	vcom -2008 rtl/tx/encoder.vhd
-	vcom -2008 rtl/tx/upsample.vhd
-	vcom -2008 rtl/tx/fir.vhd
-	vcom -2008 rtl/tx/sine_pkg.vhd
-	vcom -2008 rtl/tx/nco.vhd
-	vcom -2008 rtl/tx/mixer.vhd
-	vcom -2008 rtl/tx/duc.vhd
-	vcom -2008 rtl/tx/top_tx.vhd
-	vcom -2008 rtl/tb/tb_tx.vhd
-	
-
-sim:
-	vsim -do run.do
+all: test compile sim
 
 test:
 	python3 run_vunit.py
+
+compile:
+	vcom -2008 src/buffer.vhd
+	vcom -2008 src/encoder.vhd
+	vcom -2008 src/upsample.vhd
+	vcom -2008 src/fir.vhd
+	vcom -2008 src/sine_pkg.vhd
+	vcom -2008 src/nco.vhd
+	vcom -2008 src/mixer.vhd
+	vcom -2008 src/duc.vhd
+	vcom -2008 src/top_tx.vhd
+	vcom -2008 tb/tb_tx.vhd
+
+sim: compile
+	vsim -do "set log_filename $(RUN_NAME)_data; do run.do"
+
+cleaner: sim
+	python3 scripts/$(RUN_NAME)_cleaner.py
+
+fft: cleaner
+	python3 scripts/$(RUN_NAME)_fft.py
+
+rrc:
+	python3 scripts/rrc_fir_generator.py

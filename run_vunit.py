@@ -7,6 +7,6 @@ ui = VUnit.from_argv()
 
 lib = ui.add_library("lib")
 lib.add_source_files("rtl/tx/*.vhd")
-lib.add_source_files("rtl/tb/*.vhd")
+lib.add_source_files("rtl/tb/tb*.vhd")
 
 ui.main()

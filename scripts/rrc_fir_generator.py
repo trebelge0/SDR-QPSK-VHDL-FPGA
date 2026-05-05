@@ -20,8 +20,8 @@ def design_rrc(num_taps, osr, alpha):
     return h / np.sum(h)
 
 # Paramètres
-NUM_TAPS = 33
-OSR = 8
+NUM_TAPS = 65
+OSR = 16
 ALPHA = 0.5
 BIT_WIDTH = 16
 

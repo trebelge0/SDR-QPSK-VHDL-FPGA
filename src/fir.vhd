@@ -6,7 +6,10 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity fir is
+    -- Filter RRC for ISI minimization and band reduction
+    -- NEEDS AT LEAST 16 SAMPLES (16/L = 2 SYMBOLS) TO WORK
     generic (
+        N : integer := 65;
         DATA_WIDTH  : integer := 12;  -- Filter resolution (bits)
         COEFF_WIDTH : integer := 16;  -- FIR coefficient size (bits)
         L : integer := 4  -- Upsampler zero-padding length (bits)
@@ -29,30 +32,47 @@ end entity;
 architecture rtl of fir is
 
     -- From rrc_fir_generator.py script
-    type coeff_array is array (0 to 16) of signed(COEFF_WIDTH-1 downto 0);
+    type coeff_array is array (0 to (N-1)/2) of signed(COEFF_WIDTH-1 downto 0);
     constant COEFFS : coeff_array := (
-    x"00AF",    x"009D",    x"0040",    x"FF9C",    x"FECB",    x"FDFF",    x"FD7A",    x"FD80",
-    x"FE4B",    x"FFFA",    x"0286",    x"05C0",    x"0950",    x"0CC8",    x"0FAF",    x"119E",
-    x"124B"
+    x"0058",    x"0057",    x"004E",    x"003C",    x"0020",    x"FFFB",    x"FFCE",    x"FF9B",
+    x"FF65",    x"FF30",    x"FEFF",    x"FED7",    x"FEBC",    x"FEB3",    x"FEBF",    x"FEE4",
+    x"FF25",    x"FF82",    x"FFFD",    x"0094",    x"0144",    x"020A",    x"02E2",    x"03C4",
+    x"04AB",    x"058F",    x"0668",    x"072F",    x"07DD",    x"086B",    x"08D5",    x"0916",
+    x"092C"
     );
 
-    type shift_reg_array is array (0 to 32) of signed(1 downto 0);
+    type shift_reg_array is array (0 to N-1) of signed(1 downto 0);
     signal shift_reg : shift_reg_array := (others => (others => '0'));
     
-    signal acc : signed(32 downto 0); 
-    signal valid_delay : unsigned(15 downto 0) := (others => '0');
+    signal acc : signed(N-1 downto 0); 
+    signal valid_delay : unsigned((N-1)/2 downto 0) := (others => '0');
 
     type state_type is (INIT, FILTER, LAST);
     signal state : state_type := INIT;
 
-    signal count : integer range 0 to 16+L := 0; 
+    signal count : integer range 0 to (N-1)/2+L := 0; 
 
 
 begin
 
     process(clk)
-        variable sum : signed(32 downto 0);
+
+        procedure filter is
+        variable sum : signed(N-1 downto 0);
+        begin 
+            shift_reg(0) <= s_axis_tdata;
+            for i in 1 to N-1 loop
+                shift_reg(i) <= shift_reg(i-1);
+            end loop;
+            sum := (others => '0');
+            for i in 0 to (N-1)/2-1 loop
+                sum := sum + ( (resize(shift_reg(i), 3) + resize(shift_reg(N-1-i), 3)) * COEFFS(i) );
+            end loop;
+            acc <= sum + (resize(shift_reg((N-1)/2), 3) * COEFFS((N-1)/2));
+        end procedure;
+
         begin
+
         if rising_edge(clk) then
 
             -- Filter introduces latency, this FSM manage the slave/master valid signals according to it
@@ -64,20 +84,12 @@ begin
                     m_axis_tvalid <= '0';
                     if s_axis_tvalid = '1' then
 
-                        if count = 15 then
+                        if count = (N-1)/2-1 then
                             state <= FILTER;
                             m_axis_tvalid <= '1';
                         end if;
                         
-                        shift_reg(0) <= s_axis_tdata;
-                        for i in 1 to 32 loop
-                            shift_reg(i) <= shift_reg(i-1);
-                        end loop;
-                        sum := (others => '0');
-                        for i in 0 to 15 loop
-                            sum := sum + ( (resize(shift_reg(i), 3) + resize(shift_reg(32-i), 3)) * COEFFS(i) );
-                        end loop;
-                        acc <= sum + (resize(shift_reg(16), 3) * COEFFS(16));
+                        filter;
 
                         count <= count + 1;
                     
@@ -99,37 +111,21 @@ begin
                             count <= 0;
                         end if;
 
-                        shift_reg(0) <= s_axis_tdata;
-                        for i in 1 to 32 loop
-                            shift_reg(i) <= shift_reg(i-1);
-                        end loop;
-                        sum := (others => '0');
-                        for i in 0 to 15 loop
-                            sum := sum + ( (resize(shift_reg(i), 3) + resize(shift_reg(32-i), 3)) * COEFFS(i) );
-                        end loop;
-                        acc <= sum + (resize(shift_reg(16), 3) * COEFFS(16));
+                        filter;
 
                     end if;
 
                 -- During the last symbol, the output is still valid during the filter's latency after symbol's reception
                 when LAST =>
                     -- Counter
-                    if count = 15+L then
+                    if count = (N-1)/2-1+L then
                         state <= INIT;
                         count <= 0;
                         m_axis_tvalid <= '0';
                         m_axis_tlast <= '0';
                     end if;
                     
-                    shift_reg(0) <= s_axis_tdata;
-                    for i in 1 to 32 loop
-                        shift_reg(i) <= shift_reg(i-1);
-                    end loop;
-                    sum := (others => '0');
-                    for i in 0 to 15 loop
-                        sum := sum + ( (resize(shift_reg(i), 3) + resize(shift_reg(32-i), 3)) * COEFFS(i) );
-                    end loop;
-                    acc <= sum + (resize(shift_reg(16), 3) * COEFFS(16));
+                    filter;
 
                     count <= count + 1;
                     

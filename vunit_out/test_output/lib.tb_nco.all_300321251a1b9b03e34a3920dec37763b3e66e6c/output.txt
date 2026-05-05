@@ -1,7 +1,7 @@
-# End time: 00:03:11 on May 05,2026, Elapsed time: 0:00:00
+# End time: 13:55:35 on May 05,2026, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 1
 # vsim -modelsimini /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/vunit_out/modelsim/modelsim.ini -wlf /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/vunit_out/test_output/lib.tb_nco.all_300321251a1b9b03e34a3920dec37763b3e66e6c/modelsim/vsim.wlf -quiet -t ps -onfinish stop lib.tb_nco(behavioral) -L vunit_lib -L lib -g/tb_nco/runner_cfg="active python runner : true,enabled_test_cases : ,output path : /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/vunit_out/test_output/lib.tb_nco.all_300321251a1b9b03e34a3920dec37763b3e66e6c/,tb path : /home/trebelge/Job/Project/Exo1/SDR-QPSK-VHDL-FPGA/rtl/tb/,use_color : true" 
-# Start time: 00:03:11 on May 05,2026
+# Start time: 13:55:35 on May 05,2026
 # ** Warning: Design size of 26011 statements exceeds ModelSim-Intel FPGA Starter Edition recommended capacity.
 # Expect performance to be adversely affected.
 #       1145000 ps - default              -    INFO - NCO : Test d'oscillation rÃ©ussi.

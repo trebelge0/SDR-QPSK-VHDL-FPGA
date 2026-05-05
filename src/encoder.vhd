@@ -42,13 +42,13 @@ begin
                 m_axis_tvalid <= '1';
                 case s_axis_tdata is
                     when "00" =>
-                        m_axis_tdata <= "0101";
-                    when "01" =>
-                        m_axis_tdata <= "0111";
-                    when "10" =>
-                        m_axis_tdata <= "1101";
-                    when "11" =>    
                         m_axis_tdata <= "1111";
+                    when "01" =>
+                        m_axis_tdata <= "1101";
+                    when "10" =>
+                        m_axis_tdata <= "0111";
+                    when "11" =>    
+                        m_axis_tdata <= "0101";
                     when others =>
                         m_axis_tdata <= "0000";
                 end case;
