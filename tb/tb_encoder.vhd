@@ -95,13 +95,13 @@ begin
         
         wait for 100 ns;
 
-        check(data_bc = "0101", "Erreur mapping 00");
+        check(data_bc = "1111", "Erreur mapping 00");
         wait for 40 ns;
-        check(data_bc = "0111", "Erreur mapping 01");
+        check(data_bc = "1101", "Erreur mapping 01");
         wait for 40 ns;
-        check(data_bc = "1101", "Erreur mapping 11");
+        check(data_bc = "0111", "Erreur mapping 10");
         wait for 40 ns;
-        check(data_bc = "1111", "Erreur mapping 10");
+        check(data_bc = "0101", "Erreur mapping 11");
         test_runner_cleanup(runner);
     end process;
 end Behavioral;

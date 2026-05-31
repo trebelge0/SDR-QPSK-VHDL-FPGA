@@ -25,11 +25,11 @@ compile:
 sim: compile
 	vsim -do "set log_filename $(RUN_NAME)_data; do run.do"
 
-cleaner: sim
+cleaner_py: sim
 	python3 scripts/$(RUN_NAME)_cleaner.py
 
-fft: cleaner
+fft_py: cleaner_py
 	python3 scripts/$(RUN_NAME)_fft.py
 
-rrc:
+rrc_py:
 	python3 scripts/rrc_fir_generator.py

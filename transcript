@@ -1,0 +1,22 @@
+# set log_filename out_data
+# out_data
+#  do run.do
+# vsim work.tb_tx 
+# Start time: 17:29:27 on May 31,2026
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.tb_tx(behavioral)
+# Loading work.top_tx(behavioral)
+# Loading work.buf(behavioral)
+# Loading work.encoder(behavioral)
+# Loading work.upsample(behavioral)
+# Loading work.fir(rtl)
+# Loading work.sine_pkg
+# Loading work.duc(behavioral)
+# Loading work.nco(behavioral)
+# Loading work.mixer(behavioral)
+# .main_pane.list.interior.cs.body
+# End time: 17:29:43 on May 31,2026, Elapsed time: 0:00:16
+# Errors: 0, Warnings: 0
